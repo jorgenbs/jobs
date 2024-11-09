@@ -1,0 +1,42 @@
+name: Crawlers
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */3 * * *'
+jobs:
+  check-oslokommune:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Snømåking
+        run: |
+          url_prefix="https://www.oslo.kommune.no/service.php?service=roadmaintenance&streetID="
+
+          declare id_names=(
+            [16202]="Sars gt"
+            [14097]="Lakkegata"
+            [16338]="Siebkes"
+          )
+
+          # Iterate through each ID
+          for id in "${!id_names[@]}"; do
+            # Get the name for the current ID
+            name="${id_names[$id]}"
+
+            # Construct the URL
+            url="${url_prefix}${id}"
+
+            # Perform the curl request
+            response=$(curl -I -s "$url")
+
+            # Check the response status
+            if echo "$response" | grep -q "HTTP/1.1 200"; then
+              echo "$name (ID $id): HTTP request succeeded (status 200)"
+              curl -d "🚨 Planlagt måking av snø 🚨$name" "https://ntfy.sh/jorgen"
+            elif echo "$response" | grep -q "HTTP/1.1 404"; then
+              echo "$name (ID $id): HTTP request succeeded but returned a 404 status code"
+            else
+              echo "$name (ID $id): HTTP request failed or returned a non-200 status code"
+            fi
+          done
