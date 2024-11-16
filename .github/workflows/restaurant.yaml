@@ -2,14 +2,12 @@ name: Crawlers
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '*/5 * * * *'
 jobs:
   check-oslokommune:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Snømåking
+      - name: Annis
         run: |
           url="https://booking.gastroplanner.no/api/widget/bookings/sessions?guests=2&date="
           dates=("2024-11-29" "2024-12-04" "2024-12-11" "2024-12-14")
