@@ -2,6 +2,8 @@ name: Crawlers
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "*/10 * * * *"
 jobs:
   check-oslokommune:
     runs-on: ubuntu-latest
@@ -10,8 +12,8 @@ jobs:
       - name: Annis
         run: |
           url="https://booking.gastroplanner.no/api/widget/bookings/sessions?guests=2&date="
-          dates=("2024-11-29" "2024-12-04" "2024-12-11" "2024-12-14")
+          dates=("2025-02-03" "2025-02-04" "2025-02-05" "2025-02-06" "2025-02-07" "2025-02-08" "2025-02-09" "2025-02-10" "2025-02-11" "2025-02-12" "2025-02-13" "2025-02-14" "2025-02-15" "2025-02-16")
 
           for d in "${dates[@]}"; do
-            curl -s -H "Restaurant: AnnisOslobukta" "$url$d" | jq '.result[] | select(.hours[] | .available == true)' | if read; then curl -d "🚨Annis $d" "https://ntfy.sh/jorgen"; fi
+            curl -s -H "Restaurant: AnnisOslobukta" "$url$d" | jq '.result[] | select(.hours[] | .available == true)' | if read; then curl -d "🚨Annis $d" "https://ntfy.sh/sveinung"; fi
           done
